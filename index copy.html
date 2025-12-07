@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stress Relief</title>
+    <style>
+        /* Basic Page Reset and Layout */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Courier New', Courier, monospace; /* Monospace font keeps it detached/cool */
+            background-color: #e7eeef; /* A soft, calming clinical blue-grey */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Header Styling */
+        header {
+            text-align: center;
+            padding: 20px;
+            color: #555;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        p.instructions {
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        /* The Bubble Wrap Sheet Container */
+        #bubble-sheet {
+            display: grid;
+            /* This creates a responsive grid of roughly 60px bubbles */
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 10px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 90%;
+            margin-bottom: 30px;
+        }
+
+        /* Individual Bubble Styling */
+        .bubble {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-image: url(./assets/prepop.de942ac6.svg), radial-gradient(closest-side, rgba(0, 0, 0, 0), rgba(0, 0, 0, .05) 70%, rgba(255, 255, 255, 0) 80%);
+            box-shadow: inset 0 0 6px #fff, 2px 2px 4px #fff, 4px 4px 12px rgba(0, 0, 0, .25);
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            cursor: pointer;
+            transition: transform 0.1s ease-out;
+            position: relative;
+        }
+
+        /* Hover effect */
+        .bubble:hover {
+            transform: scale(1.02);
+        }
+
+        /* The "Popped" State */
+        .bubble.popped {
+            background-image: url(./assets/popped.612d3817.svg), radial-gradient(closest-side, rgba(0, 0, 0, .15), rgba(0, 0, 0, .1));
+            transform: scale(0.95);
+            pointer-events: none; /* Cannot click again */
+        }
+
+        /* The "Winner" Popped State */
+        .bubble.popped.winner {
+            background-image: url('./assets/OriginalPita.png');
+            background-size: cover;
+        }
+
+        /* THE HIDDEN MESSAGE MODAL POPUP */
+        #message-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none; /* Hidden by default */
+            transition: opacity 0.5s ease;
+            z-index: 100;
+        }
+
+        /* Class to activate the popup */
+        #message-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* Meme Container */
+        .meme-container {
+            position: relative;
+            display: inline-block;
+            /* Ensure container shrinks to fit image */
+            line-height: 0; 
+        }
+        .meme-container img {
+            max-width: 100vw;
+            max-height: 100vh;
+            width: auto;
+            height: auto;
+            border-radius: 0;
+        }
+        #head-target {
+            position: absolute;
+            top: 20%;
+            right: 28%;
+            width: 18%;
+            height: 23%;
+            border-radius: 50%;
+            background-image: url('./assets/OriginalPita.png');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Therapeutic Activity</h1>
+        <p class="instructions">Pop until satisfied.</p>
+    </header>
+
+    <div id="bubble-sheet">
+        </div>
+
+    <audio id="pop-sound" src="./assets/399334__anthousai__plastic-bubble-wrap-single-pop.wav" preload="auto"></audio>
+    <audio id="winner-sound" src="./assets/indihome-paket-phoenix.mp3" preload="auto"></audio>
+
+
+    <div id="message-overlay">
+        <div class="meme-container">
+            <img src="./assets/artworks-W5S9v7Hse56Icw9L-X15ZkA-t500x500.jpg" alt="Indihome Meme">
+            <div id="head-target"></div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sheet = document.getElementById('bubble-sheet');
+            const popSound = document.getElementById('pop-sound');
+            const winnerSound = document.getElementById('winner-sound');
+            const overlay = document.getElementById('message-overlay');
+            
+            const totalBubbles = 3; // How many bubbles to create
+            let bubblesPopped = 0;
+            
+            // Decide randomly which bubble holds the secret (between 0 and 99)
+            const winningIndex = Math.floor(Math.random() * totalBubbles);
+            console.log(`Psst. The secret is in bubble number: ${winningIndex + 1}`);
+
+            // Function to create the bubble grid
+            for (let i = 0; i < totalBubbles; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                bubble.dataset.index = i; // Store its index number
+                
+                // Add click listener to every bubble
+                bubble.addEventListener('mousedown', function() {
+                    if (this.classList.contains('popped')) return;
+
+                    // Visual pop
+                    this.classList.add('popped');
+                    
+                    // Check if it's the winner
+                    // We use '==' instead of '===' because dataset stores strings
+                    if (this.dataset.index == winningIndex) {
+                        this.classList.add('winner');
+                        
+                        // Play winner sound
+                        winnerSound.currentTime = 0;
+                        winnerSound.play();
+
+                        // Show overlay immediately so we can calculate positions
+                        overlay.classList.add('active');
+
+                        // Create flying element
+                        const rect = this.getBoundingClientRect();
+                        const flyer = document.createElement('div');
+                        flyer.style.position = 'fixed';
+                        flyer.style.left = rect.left + 'px';
+                        flyer.style.top = rect.top + 'px';
+                        flyer.style.width = rect.width + 'px';
+                        flyer.style.height = rect.height + 'px';
+                        flyer.style.backgroundImage = "url('./assets/OriginalPita.png')";
+                        flyer.style.backgroundSize = 'cover';
+                        flyer.style.borderRadius = '50%';
+                        flyer.style.transition = 'all 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55)'; // Bouncy effect
+                        flyer.style.zIndex = '1000';
+                        document.body.appendChild(flyer);
+
+                        // Animate to target
+                        requestAnimationFrame(() => {
+                            const target = document.getElementById('head-target');
+                            const targetRect = target.getBoundingClientRect();
+                            
+                            flyer.style.left = targetRect.left + 'px';
+                            flyer.style.top = targetRect.top + 'px';
+                            flyer.style.width = targetRect.width + 'px';
+                            flyer.style.height = targetRect.height + 'px';
+                        });
+
+                    } else {
+                        // Normal Audio pop (reset time so it can play fast repeatedly)
+                        popSound.currentTime = 0;
+                        popSound.play();
+                    }
+                    
+                    bubblesPopped++;
+                });
+
+                sheet.appendChild(bubble);
+            }
+
+            // Optional: Close popup if they click outside the box
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                }
+            })
+        });
+    </script>
+
+</body>
+</html>

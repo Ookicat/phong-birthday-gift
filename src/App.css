@@ -1,0 +1,146 @@
+/* Basic Page Reset and Layout */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-width: 0; /* Override any default min-width */
+    height: 100%;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #e7eeef;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+}
+
+#root {
+    width: 100%;
+    max-width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Header Styling */
+header {
+    text-align: center;
+    padding: 20px;
+    color: #555;
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+p.instructions {
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+/* The Bubble Wrap Sheet Container */
+#bubble-sheet {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 10px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    max-width: 800px;
+    width: 90%;
+    margin-bottom: 30px;
+}
+
+/* Individual Bubble Styling */
+.bubble {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    /* background-image is handled in component */
+    box-shadow: inset 0 0 6px #fff, 2px 2px 4px #fff, 4px 4px 12px rgba(0, 0, 0, .25);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    transition: transform 0.1s ease-out;
+    position: relative;
+    -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+}
+
+/* Hover effect - disable on touch devices to prevent sticky hover states */
+@media (hover: hover) {
+    .bubble:hover {
+        transform: scale(1.02);
+    }
+}
+
+/* The "Popped" State */
+.bubble.popped {
+    /* background-image handled in component */
+    transform: scale(0.95);
+    pointer-events: none;
+}
+
+/* The "Winner" Popped State */
+.bubble.popped.winner {
+    /* background-image handled in component */
+    background-size: cover;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.2rem;
+    }
+
+    #bubble-sheet {
+        padding: 10px;
+        gap: 5px;
+        grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+        width: 95%;
+        margin: 0 auto; /* Ensure centering */
+    }
+}
+
+/* THE HIDDEN MESSAGE MODAL POPUP */
+#message-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    z-index: 100;
+}
+
+#message-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Meme Container */
+.meme-container {
+    position: relative;
+    display: inline-block;
+    line-height: 0; 
+}
+.meme-container img {
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    border-radius: 0;
+}
