@@ -5,7 +5,7 @@ import winnerSoundFile from '../assets/indihome-paket-phoenix.mp3';
 import originalPita from '../assets/OriginalPita.png';
 
 const BubbleSheet = ({ onWin }) => {
-  const totalBubbles = 10; // Increased from 3 to 30 for a better grid
+  const totalBubbles = 50; // Increased from 3 to 30 for a better grid
   const [bubbles, setBubbles] = useState([]);
   const [winningIndex, setWinningIndex] = useState(null);
   const popAudioRef = useRef(null);
